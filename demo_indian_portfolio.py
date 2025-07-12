@@ -67,6 +67,11 @@ def main():
         print("\nOptimizing portfolio...")
         optimal_portfolio = optimizer.optimize_portfolio()
         
+        # Export data for Tableau/Power BI
+        print("\nExporting data for visualization tools...")
+        export_path = optimizer.export_data_for_visualization(optimal_portfolio)
+        print(f"Data exported to: {export_path}")
+        
         # Plot results
         print("\nGenerating portfolio visualization...")
         optimizer.plot_portfolio_composition(optimal_portfolio)

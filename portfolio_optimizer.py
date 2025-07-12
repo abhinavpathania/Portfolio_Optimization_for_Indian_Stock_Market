@@ -175,3 +175,40 @@ class SectorPortfolioOptimizer:
         print(f"Expected Annual Return: {optimal_weights['portfolio_return']*100:.2f}%")
         print(f"Annual Volatility: {optimal_weights['portfolio_volatility']*100:.2f}%")
         print(f"Sharpe Ratio: {optimal_weights['sharpe_ratio']:.2f}")
+    
+    def export_data_for_visualization(self, optimal_weights, output_dir='./data_exports'):
+        """Export portfolio data for Tableau/Power BI visualization"""
+        import os
+        if not os.path.exists(output_dir):
+            os.makedirs(output_dir)
+            
+        # Export stock weights
+        stock_weights_df = pd.DataFrame({
+            'Stock': list(optimal_weights['weights'].keys()),
+            'Weight': list(optimal_weights['weights'].values()),
+            'Sector': [self.stock_sectors[stock] for stock in optimal_weights['weights'].keys()]
+        })
+        stock_weights_df.to_csv(f'{output_dir}/stock_weights.csv', index=False)
+        
+        # Export sector weights
+        sector_weights_df = pd.DataFrame({
+            'Sector': list(optimal_weights['sector_weights'].keys()),
+            'Weight': list(optimal_weights['sector_weights'].values())
+        })
+        sector_weights_df.to_csv(f'{output_dir}/sector_weights.csv', index=False)
+        
+        # Export historical returns
+        self.returns.to_csv(f'{output_dir}/historical_returns.csv')
+        
+        # Export portfolio performance metrics
+        performance_df = pd.DataFrame({
+            'Metric': ['Expected Annual Return', 'Annual Volatility', 'Sharpe Ratio'],
+            'Value': [
+                optimal_weights['portfolio_return'] * 100,
+                optimal_weights['portfolio_volatility'] * 100,
+                optimal_weights['sharpe_ratio']
+            ]
+        })
+        performance_df.to_csv(f'{output_dir}/portfolio_metrics.csv', index=False)
+        
+        return output_dir
